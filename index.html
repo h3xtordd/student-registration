@@ -4,35 +4,212 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ระบบลงทะเบียนนักศึกษา</title>
+<link rel="stylesheet" href="login-page-10/css/style.css">
 <style>
-  body{font-family:Tahoma,sans-serif;max-width:760px;
-       margin:30px auto;padding:0 16px}
-  input,button{padding:9px;margin:4px 0;width:100%;
-       box-sizing:border-box}
-  button{background:#1f883d;color:#fff;border:0;
-       cursor:pointer;font-size:16px}
-  table{width:100%;border-collapse:collapse;margin-top:18px}
-  th,td{border:1px solid #ccc;padding:7px;text-align:left}
-  th{background:#eef5f1}
+  /* ── Page background (reuse login-page-10 gradient) ── */
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 40px 16px;
+    box-sizing: border-box;
+    font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(40% 50% at 15% 20%, #ddd6fe, transparent 70%),
+      radial-gradient(35% 45% at 85% 25%, #fecdd3, transparent 70%),
+      radial-gradient(45% 50% at 60% 95%, #bfdbfe, transparent 70%),
+      #f5f0ff;
+  }
+
+  /* ── Card container (same as .cl-login10) ── */
+  .card {
+    --ink: #18181b;
+    --muted: #52525b;
+    --violet: #6d28d9;
+    --violet-soft: #ede9fe;
+    --error: #be123c;
+    width: 100%;
+    max-width: 620px;
+    box-sizing: border-box;
+    padding: 32px clamp(20px, 6vw, 36px) 24px;
+    border: 1px solid rgba(255, 255, 255, .8);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .92);
+    box-shadow: 0 24px 60px -24px rgba(76, 29, 149, .35);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .card *, .card *::before, .card *::after {
+    box-sizing: border-box;
+  }
+
+  /* ── Header / brand ── */
+  .card-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .card-logo { grid-row: span 2; }
+  .card-brand {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .card-tagline {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* ── Title ── */
+  .card h1 {
+    margin: 0 0 18px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  /* ── Labels ── */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* ── Inputs (same as .cl-login10__input) ── */
+  .field input {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 14px;
+    border: 1px solid #d4d4d8;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .field input:hover { border-color: #a1a1aa; }
+  .field input:focus {
+    outline: none;
+    border-color: var(--violet);
+    box-shadow: 0 0 0 4px rgba(109, 40, 217, .16);
+  }
+
+  /* ── Button (same as .cl-login10__submit) ── */
+  .btn {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .15s ease, transform .15s ease;
+  }
+  .btn:hover { background: #3f3f46; }
+  .btn:active { transform: scale(.99); }
+
+  /* ── Message ── */
+  #msg {
+    margin: 12px 0 0;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--violet);
+  }
+  #msg.error { color: var(--error); }
+
+  /* ── Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 22px;
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e4e4e7;
+  }
+  th {
+    background: var(--violet-soft);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--violet);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+  tbody tr:hover { background: #faf5ff; }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  /* ── Focus ring ── */
+  .field input:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--violet);
+    outline-offset: 2px;
+  }
 </style>
 </head>
 <body>
-<h1>ระบบลงทะเบียนนักศึกษา</h1>
- 
-<input id="first_name" placeholder="ชื่อ">
-<input id="last_name" placeholder="นามสกุล">
-<input id="nickname" placeholder="ชื่อเล่น">
-<input id="student_id" placeholder="เลขนักศึกษา">
-<input id="major" placeholder="สาขาวิชา">
-<button onclick="register()">ลงทะเบียน</button>
-<p id="msg"></p>
- 
-<table>
-  <thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th>
-  <th>เลขนักศึกษา</th><th>สาขาวิชา</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
- 
+
+<div class="card">
+  <!-- Brand header (login-page-10 style) -->
+  <header class="card-head">
+    <span class="card-logo" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="16" fill="#18181b"/><path d="M10 16a6 6 0 1 1 6 6" fill="none" stroke="#c4b5fd" stroke-width="3.2" stroke-linecap="round"/><circle cx="16" cy="22" r="2.4" fill="#fda4af"/></svg>
+    </span>
+    <p class="card-brand">ระบบลงทะเบียนนักศึกษา</p>
+    <p class="card-tagline">Student Registration System</p>
+  </header>
+
+  <h1>ลงทะเบียน</h1>
+
+  <div class="field">
+    <label for="first_name">ชื่อ</label>
+    <input id="first_name" placeholder="กรอกชื่อ">
+  </div>
+  <div class="field">
+    <label for="last_name">นามสกุล</label>
+    <input id="last_name" placeholder="กรอกนามสกุล">
+  </div>
+  <div class="field">
+    <label for="nickname">ชื่อเล่น</label>
+    <input id="nickname" placeholder="กรอกชื่อเล่น">
+  </div>
+  <div class="field">
+    <label for="student_id">เลขนักศึกษา</label>
+    <input id="student_id" placeholder="กรอกเลขนักศึกษา">
+  </div>
+  <div class="field">
+    <label for="major">สาขาวิชา</label>
+    <input id="major" placeholder="กรอกสาขาวิชา">
+  </div>
+
+  <button class="btn" onclick="register()">ลงทะเบียน</button>
+  <p id="msg"></p>
+
+  <table>
+    <thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th>
+    <th>เลขนักศึกษา</th><th>สาขาวิชา</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // 1) เชื่อมต่อ Supabase (ใส่ค่าของตนเอง)
@@ -55,16 +232,19 @@ async function register() {
   if (!row.first_name || !row.last_name ||
       !row.student_id || !row.major) {
     msg.textContent = 'กรุณากรอกข้อมูลให้ครบ';
+    msg.className = 'error';
     return;
   }
   const { error } = await db.from('registrations').insert(row);
   if (error) {
+    msg.className = 'error';
     msg.textContent = (error.code === '23505')
       ? 'เลขนักศึกษานี้ลงทะเบียนแล้ว'
       : 'เกิดข้อผิดพลาด: ' + error.message;
     return;
   }
-  msg.textContent = 'ลงทะเบียนสำเร็จ';
+  msg.className = '';
+  msg.textContent = 'ลงทะเบียนสำเร็จ ✓';
   fields.forEach((id) => document.getElementById(id).value = '');
   loadRows();
 }
